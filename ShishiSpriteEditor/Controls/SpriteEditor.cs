@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.IO;
 using PatcherLib.Utilities;
 using FFTPatcher.SpriteEditor.DataTypes;
+using Newtonsoft.Json;
 
 namespace FFTPatcher.SpriteEditor
 {
@@ -408,6 +409,71 @@ namespace FFTPatcher.SpriteEditor
             animationViewer1.SetSize(zoom.Multiplier);
             seq.BuildAnimation(spriteViewer1.Sprite, out bmps, out delays, paletteIndex, zoom);
             animationViewer1.ShowAnimation(bmps, delays, tabControl1.SelectedTab == animationTabPage);
+
+            
+
+            foreach (FFTPatcher.SpriteEditor.Frame frame in spriteViewer1.Sprite.Shape.Frames)
+            {
+
+            }
+
+            IList<double> delays_json = new List<double>();
+            IList<int> frame_id_json = new List<int>();
+            foreach (FFTPatcher.SpriteEditor.Sequence.AnimationFrame frame in seq.frames)
+            {
+                delays_json.Add(frame.Delay);
+                frame_id_json.Add(frame.Index);
+            }
+
+            JsonSprite json_sprite = new JsonSprite();
+            JsonSpriteAnimation json_anim = new JsonSpriteAnimation();
+            json_anim.delays = delays_json;
+            json_anim.frame_ids = frame_id_json;
+            json_sprite.animations.Add(json_anim);
+
+            JsonSerializer serializer = new JsonSerializer();
+            using (StreamWriter sw = new StreamWriter(@"C:\Users\acurr\Documents\FFT\json.txt"))
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                serializer.Serialize(writer, json_sprite);
+            }
+        }
+
+        private class JsonSprite
+        {
+            public List<JsonSpriteAnimation> animations;
+            public List<JsonSpriteFrame> frames;
+
+            public JsonSprite()
+            {
+                animations = new List<JsonSpriteAnimation>();
+                frames = new List<JsonSpriteFrame>();
+            }
+        }
+
+        private class JsonSpriteFrame
+        {
+            public int index;
+            public List<JsonSpriteTile> tiles;
+        }
+
+        private class JsonSpriteTile
+        {
+            public int location_x;
+            public int location_y;
+            public int rectange_x;
+            public int rectange_y;
+            public int rectange_width;
+            public int rectange_height;
+            public bool revert;
+            public bool invert;
+            public float rotation;
+        }
+
+        private class JsonSpriteAnimation
+        {
+            public IList<double> delays;
+            public IList<int> frame_ids;
         }
 
         private void UpdateAnimationTab(CharacterSprite charSprite, Sprite sprite)

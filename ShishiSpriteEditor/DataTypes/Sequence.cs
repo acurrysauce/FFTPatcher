@@ -4,12 +4,14 @@ using System.Text;
 using PatcherLib.Utilities;
 using PatcherLib.Datatypes;
 using FFTPatcher.SpriteEditor.DataTypes;
+using Newtonsoft;
+using Newtonsoft.Json;
 
 namespace FFTPatcher.SpriteEditor
 {
     class Sequence
     {
-        IList<AnimationFrame> frames;
+        public IList<AnimationFrame> frames;
         public AnimationFrame this[int i]
         {
             get { return frames[i]; }
@@ -165,6 +167,10 @@ namespace FFTPatcher.SpriteEditor
 
         public void BuildAnimation( AbstractSprite sprite, out IList<System.Drawing.Bitmap> bitmaps, out IList<double> delays, int paletteIndex, Zoom zoom)
         {
+            // uniqueFrames is list of frames to build
+            // sprite is which sprite to build the frames for
+            // paletteIndex is which pallet to use
+
             // Given the set of unique frame indices, build the minimal amount of Bitmaps necessary
             Dictionary<int, System.Drawing.Bitmap> frameToBitmap = new Dictionary<int, System.Drawing.Bitmap>( uniqueFrames.Count );
             foreach ( int frame in uniqueFrames )
