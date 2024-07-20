@@ -410,29 +410,53 @@ namespace FFTPatcher.SpriteEditor
             seq.BuildAnimation(spriteViewer1.Sprite, out bmps, out delays, paletteIndex, zoom);
             animationViewer1.ShowAnimation(bmps, delays, tabControl1.SelectedTab == animationTabPage);
 
-            
-
-            foreach (FFTPatcher.SpriteEditor.Frame frame in spriteViewer1.Sprite.Shape.Frames)
-            {
-
-            }
-
-            IList<double> delays_json = new List<double>();
-            IList<int> frame_id_json = new List<int>();
-            foreach (FFTPatcher.SpriteEditor.Sequence.AnimationFrame frame in seq.frames)
-            {
-                delays_json.Add(frame.Delay);
-                frame_id_json.Add(frame.Index);
-            }
 
             JsonSprite json_sprite = new JsonSprite();
-            JsonSpriteAnimation json_anim = new JsonSpriteAnimation();
-            json_anim.delays = delays_json;
-            json_anim.frame_ids = frame_id_json;
-            json_sprite.animations.Add(json_anim);
+
+            int i = 0;
+            foreach (FFTPatcher.SpriteEditor.Frame frame in spriteViewer1.Sprite.Shape.Frames)
+            {
+                JsonSpriteFrame json_frame = new JsonSpriteFrame();
+                json_frame.index = i;
+                foreach (FFTPatcher.SpriteEditor.Tile tile in frame.Tiles)
+                {
+                    JsonSpriteTile json_tile = new JsonSpriteTile();
+                    json_tile.location_x = tile.Location.X;
+                    json_tile.location_y = tile.Location.Y;
+                    json_tile.rectange_x = tile.Rectangle.X;
+                    json_tile.rectange_y = tile.Rectangle.Y;
+                    json_tile.rectange_width = tile.Rectangle.Width;
+                    json_tile.rectange_height = tile.Rectangle.Height;
+                    json_tile.invert = tile.ReverseY;
+                    json_tile.revert = tile.ReverseX;
+                    json_tile.rotation = tile.Rotation;
+
+                    json_frame.tiles.Add(json_tile);
+                }
+                i++;
+                json_sprite.frames.Add(json_frame);
+
+            }
+
+            foreach (FFTPatcher.SpriteEditor.Sequence curr_seq in currentSequences)
+            {
+                IList<double> delays_json = new List<double>();
+                IList<int> frame_id_json = new List<int>();
+                foreach (FFTPatcher.SpriteEditor.Sequence.AnimationFrame frame in curr_seq.frames)
+                {
+                    delays_json.Add(frame.Delay);
+                    frame_id_json.Add(frame.Index);
+                }
+
+                JsonSpriteAnimation json_anim = new JsonSpriteAnimation();
+                json_anim.delays = delays_json;
+                json_anim.frame_ids = frame_id_json;
+                json_sprite.animations.Add(json_anim);
+            }
+
 
             JsonSerializer serializer = new JsonSerializer();
-            using (StreamWriter sw = new StreamWriter(@"C:\Users\acurr\Documents\FFT\json.txt"))
+            using (StreamWriter sw = new StreamWriter(@"C:\Users\acurr\Documents\FFT\sprite_assembly.json"))
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
                 serializer.Serialize(writer, json_sprite);
@@ -455,6 +479,12 @@ namespace FFTPatcher.SpriteEditor
         {
             public int index;
             public List<JsonSpriteTile> tiles;
+
+            public JsonSpriteFrame()
+            {
+                tiles = new List<JsonSpriteTile>();
+            }
+
         }
 
         private class JsonSpriteTile
