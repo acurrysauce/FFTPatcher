@@ -454,6 +454,25 @@ namespace FFTPatcher.SpriteEditor
                 json_sprite.animations.Add(json_anim);
             }
 
+            i = 0;
+            foreach (FFTPatcher.SpriteEditor.Palette palette in spriteViewer1.Sprite.Palettes)
+            {
+                JsonSpritePalette json_palette = new JsonSpritePalette();
+                foreach (System.Drawing.Color color in palette.Colors)
+                {
+                    JsonSpriteColor json_color = new JsonSpriteColor();
+                    json_color.r = color.R;
+                    json_color.g = color.G;
+                    json_color.b = color.B;
+                    json_color.a = color.A;
+
+                    json_palette.colors.Add(json_color);
+                }
+                json_sprite.palettes.Add(json_palette);
+                i++;
+            }
+
+            json_sprite.palette_index = paletteIndex;
 
             JsonSerializer serializer = new JsonSerializer();
             using (StreamWriter sw = new StreamWriter(@"C:\Users\acurr\Documents\FFT\sprite_assembly.json"))
@@ -467,11 +486,14 @@ namespace FFTPatcher.SpriteEditor
         {
             public List<JsonSpriteAnimation> animations;
             public List<JsonSpriteFrame> frames;
+            public List<JsonSpritePalette> palettes;
+            public int palette_index;
 
             public JsonSprite()
             {
                 animations = new List<JsonSpriteAnimation>();
                 frames = new List<JsonSpriteFrame>();
+                palettes = new List<JsonSpritePalette>();
             }
         }
 
@@ -504,6 +526,26 @@ namespace FFTPatcher.SpriteEditor
         {
             public IList<double> delays;
             public IList<int> frame_ids;
+        }
+
+        private class JsonSpriteColor
+        {
+            
+            public int r;
+            public int b;
+            public int g;
+            public int a;
+        }
+
+        private class JsonSpritePalette
+        {
+            public List<JsonSpriteColor> colors;
+            public int index;
+
+            public JsonSpritePalette()
+            {
+                colors = new List<JsonSpriteColor>();
+            }
         }
 
         private void UpdateAnimationTab(CharacterSprite charSprite, Sprite sprite)
