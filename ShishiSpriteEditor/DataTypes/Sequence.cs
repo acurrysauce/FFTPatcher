@@ -62,6 +62,15 @@ namespace FFTPatcher.SpriteEditor
                 BuildSequences(Properties.Resources.WEP1_SEQ, new string[194].SetAll(string.Empty), mon);
             sequences[SpriteType.WEP2] =
                 BuildSequences(Properties.Resources.WEP2_SEQ, new string[194].SetAll(string.Empty), mon);
+
+            foreach (FFTPatcher.SpriteEditor.Sequence seq in sequences[SpriteType.WEP1])
+            {
+                for (int i = 0; i < seq.frames.Count; i++)
+                {
+                    seq.frames[i] = new FFTPatcher.SpriteEditor.Sequence.AnimationFrame(seq.frames[i].Delay, seq.frames[i].Index + 28);
+                }
+            }
+
             return new ReadOnlyDictionary<SpriteType, IList<Sequence>>( sequences );
         }
 
