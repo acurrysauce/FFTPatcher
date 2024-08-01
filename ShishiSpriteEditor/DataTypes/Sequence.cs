@@ -12,6 +12,7 @@ namespace FFTPatcher.SpriteEditor
 {
     class Sequence
     {
+        public int sequence;
         public IList<AnimationFrame> frames;
         public AnimationFrame this[int i]
         {
@@ -78,6 +79,7 @@ namespace FFTPatcher.SpriteEditor
         public static IList<Sequence> BuildSequences( IList<byte> bytes, IList<string> names, bool mon )
         {
             List<UInt32> offsets = new List<uint>();
+            List<int> sequence = new List<int>();
             for ( int i = 0; i < 0x100; i++ )
             {
                 if (mon && offsets.Count >= 194)
@@ -92,6 +94,7 @@ namespace FFTPatcher.SpriteEditor
                 else
                 {
                     offsets.Add( currentOffset );
+                    sequence.Add(i);
                 }
             }
             const int animationStart = 0x0406;
@@ -100,7 +103,7 @@ namespace FFTPatcher.SpriteEditor
             {
                 if ( offsets[i] == offsets[i + 1] )
                     continue;
-                var seq = BuildSequence( bytes.Sub( animationStart + offsets[i], animationStart + offsets[i + 1] - 1 ), i, names[result.Count] );
+                var seq = BuildSequence( bytes.Sub( animationStart + offsets[i], animationStart + offsets[i + 1] - 1 ), i, names[result.Count], sequence[i]);
                 if ( seq != null )
                     result.Add( seq );
             }
@@ -113,10 +116,11 @@ namespace FFTPatcher.SpriteEditor
 
         public string Name { get; private set; }
 
-        private Sequence( IList<AnimationFrame> frames, string name )
+        private Sequence( IList<AnimationFrame> frames, string name, int sequence = 0)
         {
             Name = name;
             this.frames = frames;
+            this.sequence = sequence;
             uniqueFrames = new Set<int>();
             foreach ( var frame in frames )
             {
@@ -135,7 +139,7 @@ namespace FFTPatcher.SpriteEditor
             }
         }
 
-        private static Sequence BuildSequence( IList<byte> bytes, int index, string name)
+        private static Sequence BuildSequence( IList<byte> bytes, int index, string name, int sequence = 0)
         {
             var frames =
                 ProcessSequence( bytes, index);
@@ -150,7 +154,7 @@ namespace FFTPatcher.SpriteEditor
                     frames[i] = new FFTPatcher.SpriteEditor.Sequence.AnimationFrame(frames[i].Delay, frames[i].Index);
                 }
 
-                return new Sequence( frames, name );
+                return new Sequence( frames, name, sequence);
             }
         }
 

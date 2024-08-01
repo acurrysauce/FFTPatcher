@@ -442,16 +442,17 @@ namespace FFTPatcher.SpriteEditor
             foreach (FFTPatcher.SpriteEditor.Sequence curr_seq in Sequence.Sequences[SpriteType.TYPE1])
             {
                 IList<double> delays_json = new List<double>();
-                IList<int> frame_id_json = new List<int>();
+                IList<string> frame_id_json = new List<string>();
                 foreach (FFTPatcher.SpriteEditor.Sequence.AnimationFrame frame in curr_seq.frames)
                 {
                     delays_json.Add(frame.Delay);
-                    frame_id_json.Add(frame.Index);
+                    frame_id_json.Add(frame.Index.ToString("X"));
                 }
 
                 JsonSpriteAnimation json_anim = new JsonSpriteAnimation();
                 json_anim.delays = delays_json;
                 json_anim.frame_ids = frame_id_json;
+                json_anim.anim_id = curr_seq.sequence.ToString("X");
                 json_sprite.animations.Add(json_anim);
             }
 
@@ -526,8 +527,9 @@ namespace FFTPatcher.SpriteEditor
 
         private class JsonSpriteAnimation
         {
+            public string anim_id;
             public IList<double> delays;
-            public IList<int> frame_ids;
+            public IList<string> frame_ids;
         }
 
         private class JsonSpriteColor
