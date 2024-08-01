@@ -414,10 +414,11 @@ namespace FFTPatcher.SpriteEditor
             JsonSprite json_sprite = new JsonSprite();
 
             int i = 0;
-            foreach (FFTPatcher.SpriteEditor.Frame frame in spriteViewer1.Sprite.Shape.Frames)
+            foreach (FFTPatcher.SpriteEditor.Frame frame in Shape.TYPE1.Frames)
             {
                 JsonSpriteFrame json_frame = new JsonSpriteFrame();
                 json_frame.index = i;
+                json_frame.frame_hex = frame.frame.ToString("X");
                 foreach (FFTPatcher.SpriteEditor.Tile tile in frame.Tiles)
                 {
                     JsonSpriteTile json_tile = new JsonSpriteTile();
@@ -438,7 +439,7 @@ namespace FFTPatcher.SpriteEditor
 
             }
 
-            foreach (FFTPatcher.SpriteEditor.Sequence curr_seq in currentSequences)
+            foreach (FFTPatcher.SpriteEditor.Sequence curr_seq in Sequence.Sequences[SpriteType.TYPE1])
             {
                 IList<double> delays_json = new List<double>();
                 IList<int> frame_id_json = new List<int>();
@@ -500,6 +501,7 @@ namespace FFTPatcher.SpriteEditor
         private class JsonSpriteFrame
         {
             public int index;
+            public string frame_hex;
             public List<JsonSpriteTile> tiles;
 
             public JsonSpriteFrame()

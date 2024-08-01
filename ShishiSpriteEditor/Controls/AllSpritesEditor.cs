@@ -6,6 +6,9 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using Newtonsoft.Json;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Diagnostics;
 
 namespace FFTPatcher.SpriteEditor
 {
@@ -49,6 +52,77 @@ namespace FFTPatcher.SpriteEditor
             }
             comboBox1.SelectedIndex = 1;
             comboBox1.EndUpdate();
+
+            int j = 0;
+            JsonSpriteAttributes json = new JsonSpriteAttributes();
+            
+            foreach (var value in comboBox1.Items)
+            {
+
+                JsonSpriteAttribute attribute = new JsonSpriteAttribute();
+                //var CharacterSprite spr = new CharacterSprite();
+                if (value is CharacterSprite)
+                {
+                    CharacterSprite spr = (CharacterSprite) value;
+                    attribute.index = j;
+                    attribute.name = spr.ToString();
+                    attribute.flying = spr.Flying;
+                    attribute.SHP = spr.SHP.ToString();
+                    attribute.SEQ = spr.SEQ.ToString();
+                }else if (value is WepSprite)
+                {
+                    WepSprite spr = (WepSprite)value;
+                    attribute.index = j;
+                    attribute.name = spr.ToString();
+                    attribute.flying = false;
+                    attribute.SHP = "WEP";
+                    attribute.SEQ = "WEP";
+                }
+                else
+                {
+                    CharacterSprite spr = (CharacterSprite)value;
+                    attribute.index = j;
+                    attribute.name = spr.ToString();
+                    attribute.flying = false;
+                    attribute.SHP = spr.SHP.ToString();
+                    attribute.SEQ = spr.SEQ.ToString();
+                }
+
+
+                j++;
+                json.attributes.Add(attribute);
+            }
+
+
+            JsonSerializer serializer = new JsonSerializer();
+            using (StreamWriter sw = new StreamWriter(@"C:\Users\acurr\Documents\FFT\for_grudenheim.json"))
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                serializer.Serialize(writer, json);
+            }
+
+        }
+
+        private class JsonSpriteAttributes
+        {
+
+            public List<JsonSpriteAttribute> attributes;
+
+
+            public JsonSpriteAttributes()
+            {
+                attributes = new List<JsonSpriteAttribute>();
+            }
+        }
+
+        private class JsonSpriteAttribute
+        {
+            public string name;
+            public int index;
+            public int palette_index;
+            public string SEQ;
+            public string SHP;
+            public bool flying;
         }
 
         public AllSpritesEditor()
@@ -94,7 +168,7 @@ namespace FFTPatcher.SpriteEditor
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Sprite sprite = (sender as ComboBox).SelectedItem as Sprite;
+            Sprite sprite = (sender as System.Windows.Forms.ComboBox).SelectedItem as Sprite;
             if (sprite != null)
             {
                 spriteEditor1.BindTo(sprite, Sprites.SharedSPRs[sprite], iso);

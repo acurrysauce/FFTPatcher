@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using PatcherLib.Datatypes;
+using Newtonsoft.Json;
 
 namespace FFTPatcher.SpriteEditor
 {
@@ -45,8 +46,49 @@ namespace FFTPatcher.SpriteEditor
             result.sprites = sprites;
             result.Count = numPsxSprites;
             result.context = Context.US_PSX;
+
+            //JsonSpriteAttributes json = new JsonSpriteAttributes();
+            //for(int i = 0; i<result.Count; i++)
+            //{
+            //    JsonSpriteAttribute attribute = new JsonSpriteAttribute();
+            //    attribute.index = i;
+            //    attribute.flying = result[i].Flying;
+            //    attribute.SHP = result[i].SHP.ToString();
+            //    attribute.SEQ = result[i].SEQ.ToString();
+            //    json.attributes.Add(attribute);
+            //}
+
+            //JsonSerializer serializer = new JsonSerializer();
+            //using (StreamWriter sw = new StreamWriter(@"C:\Users\acurr\Documents\FFT\for_grudenheim.json"))
+            //using (JsonWriter writer = new JsonTextWriter(sw))
+            //{
+            //    serializer.Serialize(writer, json);
+            //}
+
+
             return result;
         }
+
+        //private class JsonSpriteAttributes
+        //{
+
+        //    public List<JsonSpriteAttribute> attributes;
+
+
+        //    public JsonSpriteAttributes()
+        //    {
+        //        attributes = new List<JsonSpriteAttribute>();
+        //    }
+        //}
+
+        //private class JsonSpriteAttribute
+        //{
+        //    public int index;
+        //    public int palette_index;
+        //    public string SEQ;
+        //    public string SHP;
+        //    public bool flying;
+        //}
 
         public static AllSpriteAttributes FromPspIso(Stream iso, PatcherLib.Iso.PspIso.PspIsoInfo info)
         {

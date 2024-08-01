@@ -109,10 +109,12 @@ namespace FFTPatcher.SpriteEditor
                 int secondHalf = bytes[4] + bytes[5] * 256;
 
                 List<uint> offsets = new List<uint>();
+                List<int> frame = new List<int>();
                 offsets.Add(0);
                 uint addy = 0;
+                
                 int i = 0;
-
+                frame.Add(0);
                 if (name == "WEP1" || name == "WEP2" || name == "WEP3" || name == "EFF1" || name == "EFF2")
                 {
                     goto wep1;
@@ -121,17 +123,25 @@ namespace FFTPatcher.SpriteEditor
                 do
                 {
                     addy = bytes.Sub(0x0C + 4 * i, 0x0C + 4 * i + 3).ToUInt32();
-                    i++;
                     if (addy != 0)
                     {
                         offsets.Add(addy);
+                        frame.Add(i);
                     }
+                    i++;
                 } while (addy != 0);
 
                 frames = new List<Frame>(offsets.Count);
                 for (i = 0; i < offsets.Count; i++)
                 {
-                    frames.Add(new Frame(bytes.Sub((int)(offsets[i] + 0x40A)), i >= secondHalf ? 256 : 0,name));
+                    frames.Add(
+                        new Frame(
+                            bytes.Sub((int)(offsets[i] + 0x40A)),
+                            i >= secondHalf ? 256 : 0,
+                            name,
+                            frame[i]
+                        )
+                    );
                 }
 
                 if (jump > 8)
@@ -147,12 +157,20 @@ namespace FFTPatcher.SpriteEditor
                         if (addy != 0)
                         {
                             offsets.Add(addy);
+                            frame.Add(i);
                         }
                     } while (addy != 0);
                 }
                 for (i = 0; i < offsets.Count; i++)
                 {
-                    frames.Add(new Frame(bytes.Sub((int)(offsets[i] + jump + 0x402)), i >= secondHalf ? 256 : 0,name));
+                    frames.Add(
+                        new Frame(
+                            bytes.Sub((int)(offsets[i] + jump + 0x402)),
+                            i >= secondHalf ? 256 : 0,
+                            name,
+                            frame[i]
+                        )
+                    );
                 }
                 goto end;
                 #endregion
@@ -166,12 +184,20 @@ namespace FFTPatcher.SpriteEditor
                     if (addy != 0)
                     {
                         offsets.Add(addy);
+                        frame.Add(i);
                     }
                 } while (addy != 0);
                 frames = new List<Frame>(offsets.Count);
                 for (i = 0; i < offsets.Count; i++)
                 {
-                    frames.Add(new Frame(bytes.Sub((int)(offsets[i] + 0x846)), 0,name));
+                    frames.Add(
+                        new Frame(
+                            bytes.Sub((int)(offsets[i] + 0x846)),
+                            0,
+                            name,
+                            frame[i]
+                        )
+                    );
                 }
                 
 

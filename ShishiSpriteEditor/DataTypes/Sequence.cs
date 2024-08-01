@@ -6,6 +6,7 @@ using PatcherLib.Datatypes;
 using FFTPatcher.SpriteEditor.DataTypes;
 using Newtonsoft;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace FFTPatcher.SpriteEditor
 {
@@ -67,7 +68,7 @@ namespace FFTPatcher.SpriteEditor
             {
                 for (int i = 0; i < seq.frames.Count; i++)
                 {
-                    seq.frames[i] = new FFTPatcher.SpriteEditor.Sequence.AnimationFrame(seq.frames[i].Delay, seq.frames[i].Index + 28);
+                    seq.frames[i] = new FFTPatcher.SpriteEditor.Sequence.AnimationFrame(seq.frames[i].Delay, seq.frames[i].Index);
                 }
             }
 
@@ -119,7 +120,7 @@ namespace FFTPatcher.SpriteEditor
             uniqueFrames = new Set<int>();
             foreach ( var frame in frames )
             {
-                uniqueFrames.Add( frame.Index );
+                uniqueFrames.Add( frame.Index);
             }
         }
 
@@ -137,11 +138,18 @@ namespace FFTPatcher.SpriteEditor
         private static Sequence BuildSequence( IList<byte> bytes, int index, string name)
         {
             var frames =
-                ProcessSequence( bytes, index );
+                ProcessSequence( bytes, index);
+
+
+
             if ( frames == null )
                 return null;
             else
             {
+                for(int i =0; i < frames.Count; i++) {
+                    frames[i] = new FFTPatcher.SpriteEditor.Sequence.AnimationFrame(frames[i].Delay, frames[i].Index);
+                }
+
                 return new Sequence( frames, name );
             }
         }

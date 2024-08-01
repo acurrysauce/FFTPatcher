@@ -44,17 +44,19 @@ namespace FFTPatcher.SpriteEditor
         /// Gets the tiles in this frame.
         /// </summary>
         public IList<Tile> Tiles { get { return tiles.AsReadOnly(); } }
-
+        public int frame = 0;
 
 		#endregion Properties 
 
 		#region Constructors (1) 
 
-        public Frame( IList<byte> bytes, int yOffset,string name )
+        public Frame( IList<byte> bytes, int yOffset,string name, int frame = 0)
         {
             int rotation = 0;
             int ydisplayoffset = 0;
             int numberOfTiles = bytes[0] + bytes[1] * 256;
+            this.frame = frame;
+
             if (name == "WEP1" || name == "WEP2" ||name == "EFF1" || name == "EFF2" )
             {
                 numberOfTiles = 0;
